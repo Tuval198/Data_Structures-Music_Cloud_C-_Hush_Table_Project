@@ -80,6 +80,8 @@ void Artist::PrintArtist() {
 }
 
 int Artist::GetSongStreams(int song_id) {
+    if(!song_avl_id->exists(song_id)) throw SongDoesNotExist();
+        //added by yuval
     Song s = song_avl_id->find(song_id);
     return s.streams;
 }

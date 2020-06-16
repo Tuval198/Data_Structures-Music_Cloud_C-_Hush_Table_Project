@@ -3,6 +3,7 @@
 //
 #include "library2.h"
 #include "SongSystem.h"
+#include <ostream>
 
 
 void *Init() {
@@ -61,9 +62,13 @@ StatusType AddSong(void *DS, int artistID, int songID) {
         return ALLOCATION_ERROR;
     }
     catch (ArtistHash::ArtistDoesNotExist){
+//        if(artistID == 68)
+//            std::cout<<"Artist does not exist exeption was thrown" << std::endl;
         return FAILURE;
     }
     catch (Artist::SongAlreadyExists){
+//        if(artistID == 68)
+//            std::cout<<"Song already exists exeption was thrown" << std::endl;
         return FAILURE;
     }
     return SUCCESS;

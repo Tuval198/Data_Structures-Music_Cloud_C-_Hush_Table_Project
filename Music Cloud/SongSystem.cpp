@@ -26,6 +26,8 @@ void SongSystem::AddSong(int artist_id, int song_id) {
 
 void SongSystem::RemoveSong(int artist_id, int song_id) {
     Artist *a = artist_hash.find(artist_id);
+    if(a == NULL) throw ArtistHash::ArtistDoesNotExist();
+        //added by yuval after tests
     int streams = a->GetSongStreams(song_id);
 
     artist_hash.RemoveSong(artist_id,song_id);
@@ -41,6 +43,8 @@ void SongSystem::RemoveSong(int artist_id, int song_id) {
 
 void SongSystem::AddToSongCount(int artist_id, int song_id, int count) {
     Artist *a = artist_hash.find(artist_id);
+    if(a == NULL) throw ArtistHash::ArtistDoesNotExist();
+    //added by yuval after tests
     int streams = a->GetSongStreams(song_id);
 
     a->AddToSongCount(song_id,count);
@@ -52,6 +56,8 @@ void SongSystem::AddToSongCount(int artist_id, int song_id, int count) {
     sd.song_id = song_id;
 
     all_song_avl.remove(sd);
+
+    //try-catch added by yuval
 
     //put the song again inside avl with new amount of streams:
     SongData new_sd;

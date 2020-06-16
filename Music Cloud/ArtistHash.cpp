@@ -1,5 +1,6 @@
 
 #include "ArtistHash.h"
+#include <ostream>
 
 ArtistHash::ArtistHash(): artist_table(new Artist*[INITIAL_SIZE]),
                             size(INITIAL_SIZE),
@@ -9,22 +10,33 @@ ArtistHash::ArtistHash(): artist_table(new Artist*[INITIAL_SIZE]),
 }
 
 ArtistHash::~ArtistHash() {
+    //std::cout << "deleting artists from artist hash:" <<std::endl;
     for(int i = 0; i<size; i++){
         Artist *a = artist_table[i];
-        Artist *next = a;
+        Artist *next = NULL;
         while(a != NULL) {
+      //      a->PrintArtist();
+      //      std::cout << "deleting Artist NODE :" <<std::endl;
             next = a->GetNext();
-            delete a;
+            Artist *temp = a;
+
+            delete temp;
+        //    std::cout << "NODE deleted" <<std::endl;
             a = next;
+
         }
+        artist_table[i] = NULL;
+   //     std::cout << "i= "<< i <<"  |  size =" <<size<<std::endl;
     }
+ //   std::cout << "table is clean, deleting table:" <<std::endl;
     delete[] artist_table;
+ //   std::cout << "table succesfuly deleted" <<std::endl;
 }
 
 
 void ArtistHash::InsertArtist(int artist_id) {
-
-    if(find(artist_id) != NULL) throw ArtistAlreadyExist();
+    Artist *a = find(artist_id);
+    if(a != NULL) throw ArtistAlreadyExist();
 
     Artist *new_artist = new Artist(artist_id);
     int new_artist_place = HashFunction(artist_id);
@@ -36,6 +48,8 @@ void ArtistHash::InsertArtist(int artist_id) {
         Artist *temp = artist_table[new_artist_place];
         new_artist->SetNext(temp);
         artist_table[new_artist_place] = new_artist;
+
+      //  std::cout << "abcdefg || inserted artist to ocupied bucket , id = "<< new_artist->GetId() <<std::endl;
     }
 
     artist_count ++;
@@ -54,6 +68,7 @@ void ArtistHash::ExpandTable() {
     for(int i = 0; i<old_size; i++){
         Artist *artist_to_copy = old_table[i];
         while(artist_to_copy !=NULL){
+
             int new_artist_place = HashFunction(artist_to_copy->GetId());
 
             if(artist_table[new_artist_place] == NULL){
@@ -64,8 +79,10 @@ void ArtistHash::ExpandTable() {
                 artist_to_copy->SetNext(temp);
                 artist_table[new_artist_place] = artist_to_copy;
             }
+            Artist *temp = artist_to_copy->GetNext();
+            artist_to_copy->SetNext(NULL);
+            artist_to_copy=temp;
 
-            artist_to_copy=artist_to_copy->GetNext();
         }
     }
     delete[] old_table;
@@ -120,6 +137,7 @@ void ArtistHash::ShrinkTable() {
     for(int i = 0; i<old_size; i++){
         Artist *artist_to_copy = old_table[i];
         while(artist_to_copy !=NULL){
+
             int new_artist_place = HashFunction(artist_to_copy->GetId());
 
             if(artist_table[new_artist_place] == NULL){
@@ -131,7 +149,9 @@ void ArtistHash::ShrinkTable() {
                 artist_table[new_artist_place] = artist_to_copy;
             }
 
-            artist_to_copy=artist_to_copy->GetNext();
+            Artist *temp = artist_to_copy->GetNext();
+            artist_to_copy->SetNext(NULL);
+            artist_to_copy=temp;
         }
     }
     delete[] old_table;
